@@ -51,3 +51,8 @@ def InitDB():
     alt.desconectar_banco()
 
 InitDB()
+
+def view():
+    alt = Banco()
+    alt.conectar_banco()
+    alt.execute('SELECT * FROM pessoas')
