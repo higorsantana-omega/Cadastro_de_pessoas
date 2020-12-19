@@ -68,7 +68,7 @@ class Cadastro_cliente:
         top.minsize(120, 1)
         top.maxsize(1370, 749)
         top.resizable(1, 1)
-        top.title("New Toplevel")
+        top.title("Cadastro Clientes")
         top.configure(background="#d9d9d9")
 
         self.Lb_CadastroCliente = tk.Label(top)
