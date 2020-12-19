@@ -177,6 +177,16 @@ class Cadastro_cliente:
         self.Lb_Profile = tk.Label(top, image=self.foto)
         self.Lb_Profile.place(relx=0.291, rely=0.511)
 
+        self.tree = ttk.Treeview(top, columns= (1,2,3), height=1, show='headings')
+        self.tree.place(relx=0.425, rely=0.511, height=147 , width=311)
+        self.tree.heading(1, text='ID')
+        self.tree.heading(2, text='Nome')
+        self.tree.heading(3, text='Telefone')
+        self.tree.column(1, width=5)
+        self.tree.column(2, width=20)
+        self.tree.column(3, width=10)
+
+
         self.Ent_Nome_Sobrenome = tk.Entry(top)
         self.Ent_Nome_Sobrenome.place(relx=0.236, rely=0.222, height=22
                 , relwidth=0.753)
