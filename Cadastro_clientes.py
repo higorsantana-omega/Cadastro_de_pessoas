@@ -3,6 +3,8 @@
 
 import sys
 
+from PIL import Image, ImageTk
+
 try:
     import Tkinter as tk
 except ImportError:
@@ -168,6 +170,12 @@ class Cadastro_cliente:
         self.Lb_Mais_informações.configure(highlightbackground="#d9d9d9")
         self.Lb_Mais_informações.configure(highlightcolor="black")
         self.Lb_Mais_informações.configure(text='''Mais informações:''')
+
+        load = Image.open("profile.png")
+        load.thumbnail((70, 70))
+        self.foto = ImageTk.PhotoImage(load)
+        self.Lb_Profile = tk.Label(top, image=self.foto)
+        self.Lb_Profile.place(relx=0.291, rely=0.511)
 
         self.Ent_Nome_Sobrenome = tk.Entry(top)
         self.Ent_Nome_Sobrenome.place(relx=0.236, rely=0.222, height=22
