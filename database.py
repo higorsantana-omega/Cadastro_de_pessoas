@@ -1,5 +1,5 @@
 import sqlite3
-from sqlite3 import sql
+# from sqlite3 import sql
 
 # Comandos básicos para interagir com o banco de dados
 class Banco():
@@ -37,3 +37,17 @@ class Banco():
             return True
         else:
             return False
+
+def InitDB():
+    alt = Banco()
+    alt.conectar_banco()
+    alt.execute("""CREATE TABLE IF NOT EXISTS pessoas(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT,
+            tel INTEGER,
+            maisinfo TEXT
+        )""")
+    alt.persist()
+    alt.desconectar_banco()
+
+InitDB()
