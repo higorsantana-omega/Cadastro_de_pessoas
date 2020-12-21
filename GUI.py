@@ -1,4 +1,6 @@
 from PIL import Image, ImageTk
+import database
+import sqlite3
 
 try:
     import Tkinter as tk
@@ -21,6 +23,8 @@ class GUI_:
         self.root.title('Cadastro de Clientes')
         self.root.configure(background="#d9d9d9")
         self.labels()
+        self.tree_view()
+        self.tree__()
         self.root.mainloop()
     
     def labels(self):
@@ -261,7 +265,8 @@ class GUI_:
 
         self.TSeparator2 = ttk.Separator(self.root)
         self.TSeparator2.place(relx=-0.018, rely=0.844, relwidth=1.036)
-
+    
+    def tree_view(self):
         self.tree = ttk.Treeview(self.root, columns=(1, 2, 3), height=5, show ="headings")
         self.tree.place(relx=0.407, rely=0.511, relheight=0.327
                 ,relwidth=0.584)
@@ -272,4 +277,17 @@ class GUI_:
         self.tree.column(2, width=1)
         self.tree.column(3, width=1)
 
-GUI_()
+    def tree__(self):
+        conn = sqlite3.connect('pessoas.db')
+        cur = conn.cursor()
+        sel_tree = cur.execute('SELECT * FROM pessoas_dados')
+        for row in sel_tree:
+            self.tree.insert('' , 'end' , values = row)
+        cur.close()
+
+
+
+if __name__ == "__main__":
+        database.InitDB()
+        GUI_()
+
