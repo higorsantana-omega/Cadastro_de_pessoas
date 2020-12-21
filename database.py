@@ -20,15 +20,15 @@ class Banco():
         Banco.connected = False
     
     # Executar comando no banco
-    def execute(self, sql, params=None):
+    def execute_comand(self, sql, params=None):
         if Banco.connected == True:
             if params == None:
                 Banco.cursor.execute(sql)
             else:
                 Banco.cursor.execute(sql, params)
-            return True
+            return (True,)
         else:
-            return False
+            return str(False)
         
     # Efetivar alterações
     def persist(self):
@@ -41,11 +41,10 @@ class Banco():
 def InitDB():
     alt = Banco()
     alt.conectar_banco()
-    alt.execute("""CREATE TABLE IF NOT EXISTS pessoas(
+    alt.execute_comand("""CREATE TABLE IF NOT EXISTS pessoas_dados(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT,
-            tel INTEGER,
-            maisinfo TEXT
+            tel INTEGER
         )""")
     alt.persist()
     alt.desconectar_banco()
@@ -55,4 +54,4 @@ InitDB()
 def view():
     alt = Banco()
     alt.conectar_banco()
-    alt.execute('SELECT * FROM pessoas')
+    alt.execute_comand('SELECT * FROM pessoas')
