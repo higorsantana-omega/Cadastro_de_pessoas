@@ -1,3 +1,6 @@
 .venv
 __pycache__
 pessoas.db
+adressBookPart4.py
+Cadastro_clientes.py
+Cadastro_clientes_support.py
