@@ -72,6 +72,7 @@ class GUI_:
         self.Ent_ProcurarNome.configure(font="TkFixedFont")
         self.Ent_ProcurarNome.configure(foreground="#000000")
         self.Ent_ProcurarNome.configure(insertbackground="black")
+        self.Ent_ProcurarNome.bind('<Return>', self.ProcurarNome)
 
         self.Ent_ProcurarTelefone = tk.Entry(self.root)
         self.Ent_ProcurarTelefone.place(relx=0.745, rely=0.067, height=15
@@ -85,6 +86,7 @@ class GUI_:
         self.Ent_ProcurarTelefone.configure(insertbackground="black")
         self.Ent_ProcurarTelefone.configure(selectbackground="#c4c4c4")
         self.Ent_ProcurarTelefone.configure(selectforeground="black")
+        self.Ent_ProcurarTelefone.bind('<Return>', self.ProcurarTel)
 
         self.Lb_Nome_Sobrenome = tk.Label(self.root)
         self.Lb_Nome_Sobrenome.place(relx=0.0, rely=0.222, height=20, width=134)
@@ -197,7 +199,7 @@ class GUI_:
 
         self.Bt_AddCliente = tk.Button(self.root)
         self.Bt_AddCliente.place(relx=0.009, rely=0.511, height=24, width=147)
-        self.Bt_AddCliente.configure(activebackground="#ececec")
+        self.Bt_AddCliente.configure(activebackground="#ececec", command=self.adicionar_pessoa)
         self.Bt_AddCliente.configure(activeforeground="#000000")
         self.Bt_AddCliente.configure(background="#c6eaec")
         self.Bt_AddCliente.configure(disabledforeground="#a3a3a3")
@@ -210,7 +212,7 @@ class GUI_:
 
         self.Bt_Deletar = tk.Button(self.root)
         self.Bt_Deletar.place(relx=0.009, rely=0.578, height=24, width=147)
-        self.Bt_Deletar.configure(activebackground="#ececec")
+        self.Bt_Deletar.configure(activebackground="#ececec", command=self.del_pessoa)
         self.Bt_Deletar.configure(activeforeground="#000000")
         self.Bt_Deletar.configure(background="#c6eaec")
         self.Bt_Deletar.configure(disabledforeground="#a3a3a3")
@@ -236,7 +238,7 @@ class GUI_:
 
         self.Bt_OrdemNome = tk.Button(self.root)
         self.Bt_OrdemNome.place(relx=0.009, rely=0.711, height=24, width=147)
-        self.Bt_OrdemNome.configure(activebackground="#ececec")
+        self.Bt_OrdemNome.configure(activebackground="#ececec", command=self.sort_by_name)
         self.Bt_OrdemNome.configure(activeforeground="#000000")
         self.Bt_OrdemNome.configure(background="#c6eaec")
         self.Bt_OrdemNome.configure(disabledforeground="#a3a3a3")
@@ -285,7 +287,70 @@ class GUI_:
             self.tree.insert('' , 'end' , values = row)
         cur.close()
 
+    def adicionar_pessoa(self):
+        self.nome_get = self.Ent_Nome_Sobrenome.get()
+        self.tel_get = self.Ent_Telefone.get()
+        conn = sqlite3.connect('pessoas.db')
+        cur = conn.cursor()
+        sel_tree = cur.execute("INSERT INTO pessoas_dados (`nome`, `tel`) values (?, ?)", (self.nome_get, self.tel_get))
+        conn.commit()
+        conn.close()
 
+        self.Ent_Nome_Sobrenome.delete(0, 'end')
+        self.Ent_Telefone.delete(0, 'end')
+        
+        conn = sqlite3.connect('pessoas.db')
+        cur = conn.cursor()
+        sel = cur.execute('SELECT * FROM pessoas_dados ORDER BY id DESC')
+        sel = list(sel)
+        self.tree.insert('', 'end', values=sel[0])
+        conn.close()
+
+    def del_pessoa(self):
+        del_sel = self.tree.item(self.tree.selection())['values'][0]
+        self.tree.delete(self.tree.selection())
+        conn = sqlite3.connect('pessoas.db')
+        cur = conn.cursor()
+        del_tree = cur.execute(f'DELETE FROM pessoas_dados WHERE id = {del_sel}')
+        conn.commit()
+        conn.close()
+
+    def sort_by_name(self):
+        for l in self.tree.get_children():
+            self.tree.delete(l)
+        
+        conn = sqlite3.connect('pessoas.db')
+        cursor = conn.cursor()
+        sel = cursor.execute('SELECT * FROM pessoas_dados ORDER BY nome ASC')
+
+        for row in sel:
+            self.tree.insert('', 'end', values = row)
+
+    def ProcurarNome(self, event):
+        for x in self.tree.get_children():
+            self.tree.delete(x)
+        nome1 = self.Ent_ProcurarNome.get()
+        conn = sqlite3.connect('pessoas.db')
+        cursor = conn.cursor()
+        sel = cursor.execute("SELECT * FROM pessoas_dados WHERE nome = (?)", (nome1,))
+        print(f'Selecionado {sel}')
+        conn.commit()
+        for row in sel:
+            self.tree.insert('', 'end', values = row)
+        conn.close()
+
+    def ProcurarTel(self, event):
+        for x in self.tree.get_children():
+            self.tree.delete(x)
+        tel = self.Ent_ProcurarTelefone.get()
+        conn = sqlite3.connect('pessoas.db')
+        cursor = conn.cursor()
+        sel = cursor.execute("SELECT * FROM pessoas_dados WHERE tel = (?)", (tel,))
+        print(f'Selecionado {sel}')
+        conn.commit()
+        for row in sel:
+            self.tree.insert('', 'end', values = row)
+        conn.close()
 
 if __name__ == "__main__":
         database.InitDB()
