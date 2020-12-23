@@ -1,6 +1,7 @@
 from PIL import Image, ImageTk
 import database
 import sqlite3
+from tkinter import filedialog
 
 try:
     import Tkinter as tk
@@ -196,6 +197,7 @@ class GUI_:
         self.Bt_Foto.configure(highlightcolor="black")
         self.Bt_Foto.configure(pady="0")
         self.Bt_Foto.configure(text='''Procurar''')
+        self.Bt_Foto.configure(command=self.procurar_foto)
 
         self.Bt_AddCliente = tk.Button(self.root)
         self.Bt_AddCliente.place(relx=0.009, rely=0.511, height=24, width=147)
@@ -306,6 +308,25 @@ class GUI_:
         self.tree.insert('', 'end', values=sel[0])
         conn.close()
 
+        conn = sqlite3.connect('pessoas.db')
+        cur = conn.cursor()
+        sel = cur.execute('SELECT * FROM pessoas_dados ORDER BY id DESC')
+        sel = list(sel)
+        id = sel[0][0]
+        filename = self.Ent_Foto.get()
+        image = Image.open(filename)
+        self.rgb_image = image.convert('RGB')
+        self.rgb_image.save(("images/profile_" + str(id) + '.jpg'))
+
+        conn.close()
+
+    def sel_foto(self):
+        foto_sel = self.tree.item(self.tree.selection())['values'][0]
+        image.thumbnail((70, 70))
+        self.foto = ImageTk.PhotoImage(image)
+        self.Lb_Profile = tk.Label(self.root, image=self.foto)
+        self.Lb_Profile.place(relx=0.291, rely=0.511)
+
     def del_pessoa(self):
         del_sel = self.tree.item(self.tree.selection())['values'][0]
         self.tree.delete(self.tree.selection())
@@ -351,6 +372,11 @@ class GUI_:
         for row in sel:
             self.tree.insert('', 'end', values = row)
         conn.close()
+
+    def procurar_foto(self):
+        self.Ent_Foto.delete(0, 'end')
+        filename = filedialog.askopenfilename(initialdir = "/", title='Selecionar foto')
+        self.Ent_Foto.insert('end', filename)
 
 if __name__ == "__main__":
         database.InitDB()
