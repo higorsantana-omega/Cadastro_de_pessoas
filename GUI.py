@@ -280,6 +280,7 @@ class GUI_:
         self.tree.column(1, width=1)
         self.tree.column(2, width=1)
         self.tree.column(3, width=1)
+        self.tree.bind('<<TreeviewSelect>>', self.tree_sel)
 
     def tree__(self):
         conn = sqlite3.connect('pessoas.db')
@@ -319,13 +320,6 @@ class GUI_:
         self.rgb_image.save(("images/profile_" + str(id) + '.jpg'))
 
         conn.close()
-
-    def sel_foto(self):
-        foto_sel = self.tree.item(self.tree.selection())['values'][0]
-        image.thumbnail((70, 70))
-        self.foto = ImageTk.PhotoImage(image)
-        self.Lb_Profile = tk.Label(self.root, image=self.foto)
-        self.Lb_Profile.place(relx=0.291, rely=0.511)
 
     def del_pessoa(self):
         del_sel = self.tree.item(self.tree.selection())['values'][0]
@@ -378,7 +372,19 @@ class GUI_:
         filename = filedialog.askopenfilename(initialdir = "/", title='Selecionar foto')
         self.Ent_Foto.insert('end', filename)
 
+    def tree_sel(self, event):
+        self.Lb_Profile.destroy()
+        foto_sel = self.tree.item(self.tree.selection())['values'][0]
+        foto_profile = "images/profile_" + str(foto_sel) + ".jpg"
+        load = Image.open(foto_profile)
+        load.thumbnail((70, 70))
+        self.foto = ImageTk.PhotoImage(load)
+
+        self.Lb_Profile = tk.Label(self.root, image=self.foto)
+        self.Lb_Profile.place(relx=0.291, rely=0.511)
+
+
+
 if __name__ == "__main__":
         database.InitDB()
         GUI_()
-
